@@ -27,14 +27,27 @@ public class App {
         final List<ConfigItem> items = new ArrayList<ConfigItem>();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(configFileName), "UTF-8"));
         for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-            items.add(parseConfigLine(line));
+            final ConfigItem item = parseConfigLine(line);
+            if (item != null) {
+                items.add(item);
+            }
         }
         return items;
     }
 
     private static ConfigItem parseConfigLine(String line) {
+        // comments
+        if (line.startsWith("#")) {
+            return null;
+        }
+        // empty line is skipped
+        final String trim = line.trim();
+        if (trim.isEmpty()) {
+            return null;
+        }
+
         final ConfigItem item = new ConfigItem();
-        final String[] split = line.trim().split("\\s+", 2);
+        final String[] split = trim.split("\\s+", 2);
         item.setFileName(split[1]);
         final String interval = split[0];
         if (interval.contains("-")) {
